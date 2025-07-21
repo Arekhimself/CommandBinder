@@ -2,6 +2,7 @@ package Listeners;
 
 import Utils.CommandBuilder;
 import Utils.ItemCreatorClass;
+import Utils.Messages;
 import de.hgpractice.commandbinder.CommandBinder;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
@@ -24,21 +25,9 @@ public class ItemInteractListener implements Listener {
         Player p = e.getPlayer();
         ItemStack item = p.getInventory().getItemInMainHand();
         if (item.getItemMeta() != null && item.getItemMeta().getPersistentDataContainer().has(NamespacedKey.minecraft("cbcmd1"))) {
-            if (e.getAction() == Action.RIGHT_CLICK_AIR || e.getAction() == Action.RIGHT_CLICK_BLOCK) {
+            if (e.getAction() == Action.RIGHT_CLICK_AIR || e.getAction() == Action.RIGHT_CLICK_BLOCK || e.getAction() == Action.LEFT_CLICK_AIR || e.getAction() == Action.LEFT_CLICK_BLOCK) {
                 e.setCancelled(true);
-                if (CommandBinder.getNbtHandler().getConfirmState(item)) {
-                    Inventory inv = Bukkit.createInventory(p, 9, "§3Item nutzen?");
-                    for (int i = 0; i < 9; i++) inv.setItem(i, ItemCreatorClass.createItem(Material.GRAY_STAINED_GLASS_PANE, 1, "§7", false, null));
-                    inv.setItem(2, ItemCreatorClass.createItem(Material.LIME_DYE, 1, "§aJa", false, null));
-                    inv.setItem(6, ItemCreatorClass.createItem(Material.RED_DYE, 1, "§cNein", false, null));
-                    p.openInventory(inv);
-                } else {
-                    CommandBuilder builder = new CommandBuilder(p, CommandBinder.getNbtHandler().getCmdArray(item), CommandBinder.getNbtHandler().getPermArray(item));
-                    if (CommandBinder.getNbtHandler().getOneTimeUseState(item)) {
-                        item.setAmount(item.getAmount() - 1);
-                    }
-                    builder.startCmds();
-                }
+                handleInteract(item, p);
             }
         }
     }
@@ -46,22 +35,38 @@ public class ItemInteractListener implements Listener {
     // Interaction with entity
     @EventHandler
     private void onEntityInteract(EntityInteractEvent e) {
-        Player p = (Player) e.getEntity();
-        ItemStack item = p.getInventory().getItemInMainHand();
-        if (item.getItemMeta() != null && item.getItemMeta().getPersistentDataContainer().has(NamespacedKey.minecraft("cbcmd1"))) {
-            if (CommandBinder.getNbtHandler().getConfirmState(item)) {
-                Inventory inv = Bukkit.createInventory(p, 9, "§3Item nutzen?");
-                for (int i = 0; i < 9; i++) inv.setItem(i, ItemCreatorClass.createItem(Material.GRAY_STAINED_GLASS_PANE, 1, "§7", false, null));
-                inv.setItem(2, ItemCreatorClass.createItem(Material.LIME_DYE, 1, "§aJa", false, null));
-                inv.setItem(6, ItemCreatorClass.createItem(Material.RED_DYE, 1, "§cNein", false, null));
-                p.openInventory(inv);
-            } else {
-                CommandBuilder builder = new CommandBuilder(p, CommandBinder.getNbtHandler().getCmdArray(item), CommandBinder.getNbtHandler().getPermArray(item));
-                if (CommandBinder.getNbtHandler().getOneTimeUseState(item)) {
-                    item.setAmount(item.getAmount() - 1);
-                }
-                builder.startCmds();
+        if (e.getEntity() instanceof Player) {
+            Player p = (Player) e.getEntity();
+            ItemStack item = p.getInventory().getItemInMainHand();
+            if (item.getItemMeta() != null && item.getItemMeta().getPersistentDataContainer().has(NamespacedKey.minecraft("cbcmd1"))) {
+                e.setCancelled(true);
+                handleInteract(item, p);
             }
+        }
+    }
+
+    private void handleInteract(ItemStack item, Player p) {
+        if (CommandBinder.getNbtHandler().isOnCooldown(item)) {
+            double remainingCooldown = CommandBinder.getNbtHandler().getRemainingCooldown(item);
+            if (remainingCooldown > 0) {
+                p.sendMessage(Messages.onCooldown.replace("%remaining%", String.valueOf(remainingCooldown / 1000)));
+                return;
+            }
+        } else {
+            CommandBinder.getNbtHandler().startCooldown(item);
+        }
+        if (CommandBinder.getNbtHandler().getConfirmState(item)) {
+            Inventory inv = Bukkit.createInventory(p, 9, "§3Item nutzen?");
+            for (int i = 0; i < 9; i++) inv.setItem(i, ItemCreatorClass.createItem(Material.GRAY_STAINED_GLASS_PANE, 1, "§7", false, null));
+            inv.setItem(2, ItemCreatorClass.createItem(Material.LIME_DYE, 1, "§aJa", false, null));
+            inv.setItem(6, ItemCreatorClass.createItem(Material.RED_DYE, 1, "§cNein", false, null));
+            p.openInventory(inv);
+        } else {
+            CommandBuilder builder = new CommandBuilder(p, CommandBinder.getNbtHandler().getCmdArray(item), CommandBinder.getNbtHandler().getPermArray(item));
+            if (CommandBinder.getNbtHandler().getOneTimeUseState(item)) {
+                item.setAmount(item.getAmount() - 1);
+            }
+            builder.startCmds();
         }
     }
 

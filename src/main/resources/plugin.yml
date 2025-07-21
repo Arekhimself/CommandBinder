@@ -2,7 +2,7 @@ name: CommandBinder
 version: '${project.version}'
 main: de.hgpractice.commandbinder.CommandBinder
 api-version: '1.20'
-author: Creeper_craft
+author: Tim Bahlinger (Creeper_craft)
 description: A plugin to bind commands to items. Inspired by the PServer-Plugin from NeruxVace.de
 commands:
   commandbinder:
@@ -10,3 +10,4 @@ commands:
       - cb
       - cmdbinder
     description: Main command of the plugin
+softdepend: ["PlaceholderAPI"]

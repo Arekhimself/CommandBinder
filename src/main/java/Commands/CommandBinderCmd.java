@@ -3,6 +3,7 @@ package Commands;
 import Utils.CommandBuilder;
 import Utils.Messages;
 import de.hgpractice.commandbinder.CommandBinder;
+import org.bukkit.Sound;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -143,6 +144,32 @@ public class CommandBinderCmd implements CommandExecutor, TabCompleter {
                 } else {
                     p.sendMessage(Messages.noPerms);
                 }
+            } else if (args[0].equals("cooldown")) {
+                if (p.hasPermission("commandbinder.cooldown")) {
+                    if (args.length == 2) {
+                        if (p.getInventory().getItemInMainHand().getType().isItem()) {
+                            ItemStack item = p.getInventory().getItemInMainHand();
+                            try {
+                                int cooldown = Integer.parseInt(args[1]);
+                                if (cooldown == 0) {
+                                    CommandBinder.getNbtHandler().removeCooldown(item);
+                                    p.sendMessage(Messages.cooldownRemoved);
+                                } else {
+                                    CommandBinder.getNbtHandler().setCooldown(item, cooldown);
+                                    p.sendMessage(Messages.cooldownSet.replace("%cooldown%", String.valueOf(cooldown)));
+                                }
+                            } catch (NumberFormatException e) {
+                                p.sendMessage(Messages.invalidCooldown);
+                            }
+                        } else {
+                            p.sendMessage(Messages.noItem);
+                        }
+                    } else {
+                        p.sendMessage(Messages.usageCooldown);
+                    }
+                } else {
+                    p.sendMessage(Messages.noPerms);
+                }
             } else if (args[0].equals("addperm")) {
                 if (p.hasPermission("commandbinder.addperm")) {
                     if (args.length > 1) {
@@ -279,6 +306,51 @@ public class CommandBinderCmd implements CommandExecutor, TabCompleter {
             completions.add("customcommands");
             completions.add("customcmds");
             completions.add("ccmds");
+            completions.add("cooldown");
+        } else if (args.length == 2) {
+            if (args[0].equals("add")) {
+                completions.add("!wait");
+                completions.add("!repeat");
+                completions.add("!endrepeat");
+                completions.add("!if");
+                completions.add("!endif");
+                completions.add("!broadcast");
+                completions.add("!text");
+                completions.add("!actionbar");
+                completions.add("!sound");
+            } else if (args[0].equals("remove") || args[0].equals("insert") || args[0].equals("set")) {
+                if (sender instanceof Player) {
+                    ItemStack item = ((Player) sender).getInventory().getItemInMainHand();
+                    if (item.getType().isItem()) {
+                        for (int i = 1; i <= CommandBinder.getNbtHandler().getHighestId(item); i++) {
+                            completions.add(String.valueOf(i));
+                        }
+                    }
+                }
+            } else if (args[0].equals("onetimeuse") || args[0].equals("confirm")) {
+                completions.add("true");
+                completions.add("false");
+            }
+        } else if (args.length == 3) {
+            if (args[0].equals("insert") || args[0].equals("set")) {
+                completions.add("!wait");
+                completions.add("!repeat");
+                completions.add("!endrepeat");
+                completions.add("!if");
+                completions.add("!endif");
+                completions.add("!broadcast");
+                completions.add("!text");
+                completions.add("!actionbar");
+                completions.add("!sound");
+            } else if (args[0].equals("add") && args[1].equals("!sound")) {
+                for (Sound sound : Sound.values()) {
+                    completions.add(sound.toString());
+                }
+            }
+        } else if (args.length == 4 && (args[0].equals("insert") || args[0].equals("set")) && args[2].equals("!sound")) {
+            for (Sound sound : Sound.values()) {
+                completions.add(sound.toString());
+            }
         }
         return completions;
     }

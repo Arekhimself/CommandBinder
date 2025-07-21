@@ -17,6 +17,9 @@ public class Messages {
     public static String oneTimeUseFalse = prefix + "§3OneTimeUse §7wurde erfolgreich auf §3false $7gesetzt!";
     public static String confirmTrue = prefix + "§3Confirm §7wurde erfolgreich auf §3true §7gesetzt!";
     public static String confirmFalse = prefix + "§3Confirm §7wurde erfolgreich auf §3false §7gesetzt!";
+    public static String cooldownSet = prefix + "§3Cooldown §7wurde erfolgreich auf §3%cooldown% §7Sekunden gesetzt!";
+    public static String cooldownRemoved = prefix + "§3Cooldown §7wurde erfolgreich entfernt!";
+    public static String onCooldown = prefix + "§cDu musst noch §3%remaining% §cSekunden warten, bevor du dieses Item erneut verwenden kannst.";
     public static String listHeader = prefix + "§3Commands:";
     public static String listPermHeader = prefix + "§3Permissions:";
     public static String listItemOdd = "§7× §9";
@@ -64,11 +67,29 @@ public class Messages {
             "§8× §3%day% §8» §7Der aktuelle Tag\n" +
             "§8× §3%hour% §8» §7Die aktuelle Stunde\n" +
             "§8× §3%minute% §8» §7Die aktuelle Minute\n" +
-            "§8× §3%second% §8» §7Die aktuelle Sekunde";
+            "§8× §3%second% §8» §7Die aktuelle Sekunde" +
+            "§8× §3%entityuuid% §8» §7Die UUID des Entities, das der Spieler ansieht\n" +
+            "§8× §3%entityname% §8» §7Der Name des Entities, das der Spieler ansieht\n" +
+            "§8× §3%entitytype% §8» §7Der Typ des Entities, das der Spieler ansieht\n" +
+            "§8× §3%entityx% §8» §7Die X Position des Entities, das der Spieler ansieht\n" +
+            "§8× §3%entityy% §8» §7Die Y Position des Entities, das der Spieler ansieht\n" +
+            "§8× §3%entityz% §8» §7Die Z Position des Entities, das der Spieler ansieht\n" +
+            "§8× §3%entityyaw% §8» §7Der Yaw des Entities, das der Spieler ansieht\n" +
+            "§8× §3%entitypitch% §8» §7Der Pitch des Entities, das der Spieler ansieht\n" +
+            "§8× §3%randomNum:<Von>-<Bis>% §8» §7Generiert eine zufällige Zahl zwischen den beiden Grenzen\n" +
+            "§8× §3%score:<Score>% §8» §7Gibt den Wert des angegebenen Scores aus\n" +
+            "§8× §3%math:<Ausdruck>% §8» §7Berechnet den eingegebenen Ausdruck\n" +
+            "§8× §3%math:if(<Abfrage>, <True>, <False>)% §8» §7Gibt den True oder False Wert aus basierend auf dem Ausdruck";
     public static String customCmdsText = prefix + "CustomCommands\n" +
-            "§8× §3!wait <Sekunden> §8» §7Wartet x Sekunden vor Ausführung des nächsten Befehls\n" +
-            "§8× §3!repeat <Anzahl> §8» §7Führt die Nachfolgenden Befehle x Mal aus.\n" +
-            "§8× §3!endrepeat §8» §7Legt das Ende eines !repeat-Befehls fest.";
+            "§8× §3!wait <Sekunden> §8» §7Wartet x Sekunden vor Ausführung des nächsten Befehls.\n" +
+            "§8× §3!repeat <Anzahl> §8» §7Führt die nachfolgenden Befehle x Mal aus.\n" +
+            "§8× §3!endrepeat §8» §7Legt das Ende eines !repeat-Befehls fest.\n" +
+            "§8× §3!if <Abfrage> §8» §7Führt die nachfolgenden Befehle aus, sofern die Abfrage stimmt.\n" +
+            "§8× §3!endif §8» §7Legt das Ende eines !if-Befehls fest.\n" +
+            "§8× §3!broadcast <Nachricht> §8» §7Sendet die Nachricht an alle Spieler.\n" +
+            "§8× §3!text <Nachricht> §8» §7Sendet die Nachricht an den Spieler, der das Item benutzt.\n" +
+            "§8× §3!actionbar <Nachricht> §8» §7Sendet die Nachricht an den Spieler, der das Item benutzt in die Actionbar.\n" +
+            "§8× §3!sound <Ton>:<Lautstärke>:<Tonhöhe> §8» §7Spielt den Ton für den Spieler, der das Item benutzt.";
 
     // ------------------ CommandOutput ------------------ //
 
@@ -76,6 +97,7 @@ public class Messages {
     public static String noPerms = prefix + "§cDazu hast du keine Rechte!";
     public static String invalidId = prefix + "§cDiese §3ID §cexistiert nicht!";
     public static String invalidPerm = prefix + "§cDiese §3Permission §cexistiert nicht auf dem Item!";
+    public static String invalidCooldown = prefix + "§cDer §3Cooldown §cmuss eine Zahl sein!";
     public static String noCmds = prefix + "Es sind §ckeine §7Befehle auf diesem Item gespeichert!";
     public static String noItem = prefix + "§cDu musst ein Item in der Hand halten!";
     // ------------------- ErrorOutput ------------------- //
@@ -89,5 +111,6 @@ public class Messages {
     public static String usageRemovePerm = prefix + "§7Verwendung: §7/commandbinder removeperm <Permission>";
     public static String usageOneTimeUse = prefix + "§7Verwendung: §7/commandbinder onetimeuse <true/false>";
     public static String usageConfirm = prefix + "§7Verwendung: §7/commandbinder confirm <true/false>";
+    public static String usageCooldown = prefix + "§7Verwendung: §7/commandbinder cooldown <Sekunden>";
     // --------------------- Usage ----------------------- //
 }

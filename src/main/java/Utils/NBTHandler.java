@@ -139,6 +139,60 @@ public class NBTHandler {
         }
         return false;
     }
+
+    public void setCooldown(ItemStack item, double cooldown) {
+        ItemMeta itemMeta = item.getItemMeta();
+        if (itemMeta != null) {
+            itemMeta.getPersistentDataContainer().set(NamespacedKey.minecraft("cbcooldown"), PersistentDataType.DOUBLE, cooldown);
+            item.setItemMeta(itemMeta);
+        }
+    }
+
+    public void removeCooldown(ItemStack item) {
+        ItemMeta itemMeta = item.getItemMeta();
+        if (itemMeta != null) {
+            if (itemMeta.getPersistentDataContainer().has(NamespacedKey.minecraft("cbcooldown"), PersistentDataType.DOUBLE)) {
+                itemMeta.getPersistentDataContainer().remove(NamespacedKey.minecraft("cbcooldown"));
+                itemMeta.getPersistentDataContainer().remove(NamespacedKey.minecraft("cbcooldown_start"));
+                item.setItemMeta(itemMeta);
+            }
+        }
+    }
+
+    public void startCooldown(ItemStack item) {
+        ItemMeta itemMeta = item.getItemMeta();
+        if (itemMeta != null) {
+            if (itemMeta.getPersistentDataContainer().has(NamespacedKey.minecraft("cbcooldown"), PersistentDataType.DOUBLE)) {
+                itemMeta.getPersistentDataContainer().set(NamespacedKey.minecraft("cbcooldown_start"), PersistentDataType.LONG, System.currentTimeMillis());
+                item.setItemMeta(itemMeta);
+            }
+        }
+    }
+
+    public boolean isOnCooldown(ItemStack item) {
+        ItemMeta itemMeta = item.getItemMeta();
+        if (itemMeta != null) {
+            if (itemMeta.getPersistentDataContainer().has(NamespacedKey.minecraft("cbcooldown"), PersistentDataType.DOUBLE) &&
+                itemMeta.getPersistentDataContainer().has(NamespacedKey.minecraft("cbcooldown_start"), PersistentDataType.LONG)) {
+                long startTime = itemMeta.getPersistentDataContainer().get(NamespacedKey.minecraft("cbcooldown_start"), PersistentDataType.LONG);
+                double cooldown = itemMeta.getPersistentDataContainer().get(NamespacedKey.minecraft("cbcooldown"), PersistentDataType.DOUBLE);
+                return System.currentTimeMillis() - startTime < cooldown * 1000;
+            }
+        }
+        return false;
+    }
+
+    public double getRemainingCooldown(ItemStack item) {
+        ItemMeta itemMeta = item.getItemMeta();
+        if (itemMeta != null) {
+            if (itemMeta.getPersistentDataContainer().has(NamespacedKey.minecraft("cbcooldown"), PersistentDataType.DOUBLE) &&
+                itemMeta.getPersistentDataContainer().has(NamespacedKey.minecraft("cbcooldown_start"), PersistentDataType.LONG)) {
+                return (itemMeta.getPersistentDataContainer().get(NamespacedKey.minecraft("cbcooldown_start"), PersistentDataType.LONG) +
+                        (itemMeta.getPersistentDataContainer().get(NamespacedKey.minecraft("cbcooldown"), PersistentDataType.DOUBLE) * 1000)) - System.currentTimeMillis();
+            }
+        }
+        return 0;
+    }
     // ------------------- Options ------------------- //
 
     // ------------------ Permissions ------------------ //
