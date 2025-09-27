@@ -1,3 +1,6 @@
+Fork from https://github.com/Creepercraft206/CommandBinder
+Full credit to original author. Thx !
+
 <h1 align="center">CommandBinder</h1>
 <p align="center">
     <img src="https://www.spigotmc.org/attachments/cb-icon-png.812903/" width="150" />
